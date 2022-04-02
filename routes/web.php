@@ -36,8 +36,7 @@ Route::prefix('products')->group(function () {
     Route::post('shelf', [App\Http\Controllers\ProductController::class, 'shelf_save'])->name('products.shelf.save')->middleware('adminRole');
     Route::delete('shelf', [App\Http\Controllers\ProductController::class, 'shelf_delete'])->name('products.shelf.delete')->middleware('adminRole');
     Route::get('barcode/{code}', [App\Http\Controllers\ProductController::class, 'generateBarcode'])->name('products.barcode');
-    Route::get('/proyek', 'ProyekController@index');
-    Route::get('/proyek/export_excel', 'ProyekController@export_excel');
+    Route::get('export_history', [App\Http\Controllers\ProductController::class, 'export_history'])->name('products.export_history');
 });
 
 Route::prefix('users')->group(function () {

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProyekExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 use DNS1D;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -250,6 +252,7 @@ class ProductController extends Controller
         $amount     = $req->amount;
         $shelf      = $req->shelf;
         $type       = $req->type;
+        $desc       = $req->description;
         
         if(!empty($amount)){
             if(!empty($req->shelf)){
@@ -258,7 +261,8 @@ class ProductController extends Controller
                     "product_id"        => $product_id,
                     "product_amount"    => $amount,
                     "shelf_id"          => $shelf,
-                    "type"              => $type
+                    "type"              => $type,
+                    "description"       => $desc,
                 ];
 
                 $totalStockIn   = DB::table('stock')->where([["product_id", $product_id], ["shelf_id", $shelf], ["type", 1]])->sum("product_amount");
@@ -315,6 +319,10 @@ class ProductController extends Controller
 
         $history = $history->paginate(50);
         return View::make("stock_history")->with(compact("history"));
+    }
+
+    public function export_history() {
+        return Excel::download(new ProyekExport, 'history.xlsx');
     }
 
     public function categories(Request $req){

@@ -2,16 +2,23 @@
 
 namespace App\Exports;
 
-use App\Proyek;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class ProyekExport implements FromCollection
+class ProyekExport implements FromView
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+    public function view(): View
     {
-        return Proyek::all();
+        $history = DB::table('stock')
+                    ->leftJoin("products", "stock.product_id", "=", "products.product_id")
+                    ->leftJoin("shelf", "stock.shelf_id", "=", "shelf.shelf_id")
+                    ->leftJoin("users", "stock.user_id", "=", "users.id")
+                    ->select("stock.*", "products.product_code", "products.product_name", "shelf.shelf_name", "users.name")
+                    ->orderBy("stock.stock_id", "desc");
+
+        return view('export_history', [
+            'history' => $history->get()
+        ]);
     }
 }

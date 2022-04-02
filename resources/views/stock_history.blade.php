@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-            <a href="/proyek/export_excel" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
+            <a href="{{route('products.export_history')}}" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
                 <div class="card-tools">
                     <form>
                         <div class="input-group input-group">
@@ -70,6 +70,7 @@
                                     <td class="text-center">{{ $d->name }}</td>
                                     <td class="text-center">{{ date('d/m/Y H:i:s', strtotime($d->datetime)) }}</td>
                                     <td class="text-center">{{ $d->ending_amount }}</td>
+                                    <td class="text-center">{{ $d->description }}</td>
                                 </tr>
                             @endforeach
                         @else
