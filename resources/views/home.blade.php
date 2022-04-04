@@ -1,15 +1,15 @@
 @extends('layouts.main')
 @section('title', __('Dashboard'))
 @section('custom-css')
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+<link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endsection
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-    <div class="row mb-2">
-    </div>
+        <div class="row mb-2">
+        </div>
     </div>
 </div>
 <section class="content">
@@ -75,12 +75,12 @@
                 <div class="modal-header">
                     <h4 id="modal-title" class="modal-title">{{ __('Stock In') }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center">
-                        <img width="150px" src="/img/barcode_scanner.png"/>
+                        <img width="150px" src="/img/barcode_scanner.png" />
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -129,7 +129,8 @@
                                 <div class="form-group row">
                                     <label for="description" class="col-sm-4 col-form-label">Description</label>
                                     <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="description" name="description">
+                                        <textarea class="form-control" id="description" name="description" cols="30" rows="10"></textarea>
+                                        <!-- <input type="text" class="form-control" id="description" name="description"> -->
                                     </div>
                                 </div>
                             </form>
@@ -146,174 +147,188 @@
 </section>
 @endsection
 @section('custom-js')
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.min.js"></script>
-    <script>
-        $(function () {
-            $('#form').hide();
-            loader(0);
-            $('.select2').select2({
-                theme: 'bootstrap4'
-            });
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+<script src="/plugins/toastr/toastr.min.js"></script>
+<script src="/plugins/select2/js/select2.full.min.js"></script>
+<script>
+    $(function() {
+        $('#form').hide();
+        loader(0);
+        $('.select2').select2({
+            theme: 'bootstrap4'
         });
-
-        $('#pcode').on('input', function() {
-            $("#form").hide();
-            $("#button-update").hide();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
+    });
 
-        function resetForm(){
-            $('#form').trigger("reset");
-            $('#pcode').val('');
-            $("#button-update").hide();
-            $('#pcode').prop("disabled", false);
-            $('#button-check').prop("disabled", false);
+    $('#pcode').on('input', function() {
+        $("#form").hide();
+        $("#button-update").hide();
+    });
+
+    function resetForm() {
+        $('#form').trigger("reset");
+        $('#pcode').val('');
+        $("#button-update").hide();
+        $('#pcode').prop("disabled", false);
+        $('#button-check').prop("disabled", false);
+    }
+
+    function stockForm(type = 1) {
+        $("#form").hide();
+        resetForm();
+        $("#type").val(type);
+        if (type == 1) {
+            $('#modal-title').text("Stock In");
+            $('#button-update').text("Stock In");
+        } else {
+            $('#modal-title').text("Stock Out");
+            $('#button-update').text("Stock Out");
         }
+    }
 
-        function stockForm(type=1){
-            $("#form").hide();
-            resetForm();
-            $("#type").val(type);
-            if(type == 1){
-                $('#modal-title').text("Stock In");
-                $('#button-update').text("Stock In");
-            } else {
-                $('#modal-title').text("Stock Out");
-                $('#button-update').text("Stock Out");
-            }
-        }
-
-        function getShelf(pid=null){
-            var type = $('#type').val();
-            $.ajax({
-                url: '/products/shelf',
-                type: "GET",
-                data: {"format":"json", "product_id":pid},
-                dataType: "json",
-                success:function(data) {
-                    $('#shelf').empty();
-                    $('#shelf').append('<option value="">.:: Select Shelf ::.</option>');
-                    $.each(data, function(key, value) {
-                        if(type == 1){
-                            $('#shelf').append('<option value="'+ value.shelf_id +'">'+ value.shelf_name +'</option>');
-                        } else {
-                            $('#shelf').append('<option value="'+ value.shelf_id +'">'+ value.shelf_name +' (Stock: '+value.product_amount+')</option>');
-                        }
-                    });
-                }
-            });
-        }
-
-        function enableStockInput(){
-            $('#button-update').prop("disabled", false);
-            $("#button-update").show();
-            $('#form').show();
-        }
-
-        function disableStockInput(){
-            $('#button-update').prop("disabled", true);
-            $("#button-update").hide();
-            $('#form').hide();
-        }
-
-        function loader(status=1){
-            if(status == 1){
-                $('#loader').show();
-            } else {
-                $('#loader').hide();
-            }
-        }
-
-        function productCheck(){
-            var pcode = $('#pcode').val();
-            if(pcode.length > 0){
-                loader();
-                $('#form').hide();
-                $('#pcode').prop("disabled", true);
-                $('#button-check').prop("disabled", true);
-                $.ajax({
-                    url: '/products/check/'+pcode,
-                    type: "GET",
-                    data: {"format": "json"},
-                    dataType: "json",
-                    success:function(data) {
-                        loader(0);
-                        if(data.status == 1){
-                            $('#pid').val(data.data.product_id);
-                            $('#pcode').val(data.data.product_code);
-                            $('#pname').val(data.data.product_name);
-                            if($('#type').val() == 0){
-                                getShelf($('#pid').val());
-                            } else {
-                                getShelf();
-                            }
-                            enableStockInput();
-                        } else {
-                            disableStockInput();
-                            toastr.error("Product Code tidak dikenal!");
-                        }
-                        $('#pcode').prop("disabled", false);
-                        $('#button-check').prop("disabled", false);
-                    }, error:function(){
-                        $('#pcode').prop("disabled", false);
-                        $('#button-check').prop("disabled", false);
+    function getShelf(pid = null) {
+        var type = $('#type').val();
+        $.ajax({
+            url: '/products/shelf',
+            type: "GET",
+            data: {
+                "format": "json",
+                "product_id": pid
+            },
+            dataType: "json",
+            success: function(data) {
+                $('#shelf').empty();
+                $('#shelf').append('<option value="">.:: Select Shelf ::.</option>');
+                $.each(data, function(key, value) {
+                    if (type == 1) {
+                        $('#shelf').append('<option value="' + value.shelf_id + '">' + value.shelf_name + '</option>');
+                    } else {
+                        $('#shelf').append('<option value="' + value.shelf_id + '">' + value.shelf_name + ' (Stock: ' + value.product_amount + ')</option>');
                     }
                 });
-            } else {
-                toastr.error("Product Code belum diisi!");
             }
-        }
+        });
+    }
 
-        function stockUpdate(){
+    function enableStockInput() {
+        $('#button-update').prop("disabled", false);
+        $("#button-update").show();
+        $('#form').show();
+    }
+
+    function disableStockInput() {
+        $('#button-update').prop("disabled", true);
+        $("#button-update").hide();
+        $('#form').hide();
+    }
+
+    function loader(status = 1) {
+        if (status == 1) {
+            $('#loader').show();
+        } else {
+            $('#loader').hide();
+        }
+    }
+
+    function productCheck() {
+        var pcode = $('#pcode').val();
+        if (pcode.length > 0) {
             loader();
+            $('#form').hide();
             $('#pcode').prop("disabled", true);
             $('#button-check').prop("disabled", true);
-            $('#button-update').prop("disabled", true);
-            disableStockInput();
-            var data = {
-                product_id:$('#pid').val(),
-                amount:$('#pamount').val(),
-                shelf:$('#shelf').val(),
-                type:$('#type').val(),
-            }
-            
             $.ajax({
-                url: '/products/stockUpdate',
-                type: "post",
-                data: JSON.stringify(data),
+                url: '/products/check/' + pcode,
+                type: "GET",
+                data: {
+                    "format": "json"
+                },
                 dataType: "json",
-                contentType: 'application/json',
-                success:function(data) {
+                success: function(data) {
                     loader(0);
-                    if(data.status == 1){
-                        toastr.success(data.message);
-                        resetForm();
-                    } else {
-                        toastr.error(data.message);
+                    if (data.status == 1) {
+                        $('#pid').val(data.data.product_id);
+                        $('#pcode').val(data.data.product_code);
+                        $('#pname').val(data.data.product_name);
+                        if ($('#type').val() == 0) {
+                            getShelf($('#pid').val());
+                        } else {
+                            getShelf();
+                        }
                         enableStockInput();
-                        $('#pcode').prop("disabled", false);
-                        $('#button-check').prop("disabled", false);
+                    } else {
+                        disableStockInput();
+                        toastr.error("Product Code tidak dikenal!");
                     }
-                }, error:function(){
-                    loader(0);
-                    toastr.error("Unknown error! Please try again later!");
-                    resetForm();
+                    $('#pcode').prop("disabled", false);
+                    $('#button-check').prop("disabled", false);
+                },
+                error: function() {
+                    $('#pcode').prop("disabled", false);
+                    $('#button-check').prop("disabled", false);
                 }
             });
+        } else {
+            toastr.error("Product Code belum diisi!");
         }
-    </script>
-    @if(Session::has('success'))
-        <script>toastr.success('{!! Session::get("success") !!}');</script>
-    @endif
-    @if(Session::has('error'))
-        <script>toastr.error('{!! Session::get("error") !!}');</script>
-    @endif
-    @if(!empty($errors->all()))
-        <script>toastr.error('{!! implode("", $errors->all("<li>:message</li>")) !!}');</script>
-    @endif
+    }
+
+    function stockUpdate() {
+        loader();
+        $('#pcode').prop("disabled", true);
+        $('#button-check').prop("disabled", true);
+        $('#button-update').prop("disabled", true);
+        disableStockInput();
+        var data = {
+            product_id: $('#pid').val(),
+            amount: $('#pamount').val(),
+            shelf: $('#shelf').val(),
+            type: $('#type').val(),
+            description: $('#description').val(),
+        }
+
+        $.ajax({
+            url: '/products/stockUpdate',
+            type: "post",
+            data: JSON.stringify(data),
+            dataType: "json",
+            contentType: 'application/json',
+            success: function(data) {
+                loader(0);
+                if (data.status == 1) {
+                    toastr.success(data.message);
+                    resetForm();
+                } else {
+                    toastr.error(data.message);
+                    enableStockInput();
+                    $('#pcode').prop("disabled", false);
+                    $('#button-check').prop("disabled", false);
+                }
+            },
+            error: function() {
+                loader(0);
+                toastr.error("Unknown error! Please try again later!");
+                resetForm();
+            }
+        });
+    }
+</script>
+@if(Session::has('success'))
+<script>
+    toastr.success('{!! Session::get("success") !!}');
+</script>
+@endif
+@if(Session::has('error'))
+<script>
+    toastr.error('{!! Session::get("error") !!}');
+</script>
+@endif
+@if(!empty($errors->all()))
+<script>
+    toastr.error('{!! implode("", $errors->all("<li>:message</li>")) !!}');
+</script>
+@endif
 @endsection
