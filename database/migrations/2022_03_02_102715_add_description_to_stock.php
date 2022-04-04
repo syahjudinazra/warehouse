@@ -14,7 +14,7 @@ class AddDescriptionToStock extends Migration
     public function up()
     {
         Schema::table('stock', function (Blueprint $table) {
-            $table->string('description')->nullable();
+            $table->varchar('description');
         });
     }
 

@@ -16,7 +16,11 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
+<<<<<<< HEAD
             <a href="{{route('products.export_history')}}" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
+=======
+            <a href="/stock/export_excel" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
+>>>>>>> main
                 <div class="card-tools">
                     <form>
                         <div class="input-group input-group">

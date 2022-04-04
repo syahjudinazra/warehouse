@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Exports\ProyekExport;
+use App\Exports\ExcelsExport;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ExcelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,8 +38,14 @@ Route::prefix('products')->group(function () {
     Route::post('shelf', [App\Http\Controllers\ProductController::class, 'shelf_save'])->name('products.shelf.save')->middleware('adminRole');
     Route::delete('shelf', [App\Http\Controllers\ProductController::class, 'shelf_delete'])->name('products.shelf.delete')->middleware('adminRole');
     Route::get('barcode/{code}', [App\Http\Controllers\ProductController::class, 'generateBarcode'])->name('products.barcode');
+<<<<<<< HEAD
     Route::get('export_history', [App\Http\Controllers\ProductController::class, 'export_history'])->name('products.export_history');
+=======
+
+>>>>>>> main
 });
+    Route::get('/stock', 'ExcelController@index');
+    Route::get('/stock/export_excel', [App\Http\Controllers\ExcelController::class, 'export_excel'])->name('excel.report');
 
 Route::prefix('users')->group(function () {
     Route::get('', [App\Http\Controllers\UserController::class, 'users'])->name('users')->middleware('adminRole');

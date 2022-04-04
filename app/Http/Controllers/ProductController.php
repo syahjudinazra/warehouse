@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 use DNS1D;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+<<<<<<< HEAD
+=======
+use App\Exports\ExcelsExport;
+>>>>>>> main
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
@@ -248,11 +252,20 @@ class ProductController extends Controller
     }
 
     public function product_stock(Request $req){
+<<<<<<< HEAD
         $product_id = $req->product_id;
         $amount     = $req->amount;
         $shelf      = $req->shelf;
         $type       = $req->type;
         $desc       = $req->description;
+=======
+        dd($req);
+        $product_id  = $req->product_id;
+        $amount      = $req->amount;
+        $shelf       = $req->shelf;
+        $type        = $req->type;
+        $description = $req->description;
+>>>>>>> main
         
         if(!empty($amount)){
             if(!empty($req->shelf)){
@@ -283,7 +296,8 @@ class ProductController extends Controller
                 } else {
                     $data["ending_amount"] = $endingAmount+$amount;
                 }
-
+                $data['description'] = $description;
+                dd($data);
                 $updateStock = DB::table('stock')->insertGetId($data);
 
                 if($updateStock){
@@ -301,6 +315,12 @@ class ProductController extends Controller
         resp:
         return response()->json($result);
     }
+    public function product_description(Request $req){
+        $description = new description;
+        $description->description = $req->description;
+        $description->save();
+       }
+      
 
     public function product_stock_history(Request $req){
         $search = $req->search;
